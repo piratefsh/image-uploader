@@ -72,7 +72,7 @@ def upload_file():
             'new_url': new_url
         }
 
-        return json.dumps(success_response)
+        return jsonify(success_response)
 
 @app.route('/upload/url', methods=['POST'])
 def upload_file_by_url():
@@ -96,7 +96,7 @@ def upload_file_by_url():
 
         filename = hash_name(url)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
+
         # write image to file
         with open(filepath, 'wb') as fd:
             for chunk in r.iter_content(2**5):
@@ -107,7 +107,7 @@ def upload_file_by_url():
             'new_url': url_for('get_image', filename=filename, _external=True)
         }
 
-        return json.dumps(success_response)
+        return jsonify(success_response)
 
 
 @app.route('/get/<filename>', methods=['GET'])
