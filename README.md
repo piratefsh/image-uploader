@@ -1,6 +1,8 @@
 # Image Uploader Flask App
 A super simple image uploader. Takes either an image file or url and saves it to server, and serves it back on this CORS friendly server.
 
+Stores up to 500 images, then starts to cull them.
+
 ## Install
 
 ```
