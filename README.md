@@ -37,5 +37,5 @@ Filename is the hashed URL for the image
 ```
 curl http://0.0.0.0:5000/upload/url --data url="https://c1.staticflickr.com/1/764/22721826666_f874599d8f_k.jpg"
 
-{"new_url": "http://45.55.61.164:5000/get/e8881593e82109cdd89341ad82a2c9ee.jpg", "success": "true"}
+{"new_url": "http://0.0.0.0:5000/get/e8881593e82109cdd89341ad82a2c9ee.jpg", "success": "true"}
 ```
