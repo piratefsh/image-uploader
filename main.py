@@ -22,7 +22,7 @@ def allowed_file(filename):
 def hash_name(filename):
     md5 = hashlib.md5()
     md5.update(filename)
-    str(md5.hexdigest()) + '.jpg'
+    return str(md5.hexdigest()) + '.jpg'
 
 
 # Routes
@@ -92,5 +92,5 @@ if __name__ == '__main__':
     CORS(app)
     Compress(app)
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0')
 
