@@ -5,6 +5,7 @@ import json
 from flask import Flask, request, redirect, url_for, jsonify, send_from_directory
 from flask.ext.cors import CORS
 from flask.ext.compress import Compress 
+from werkzeug import secure_filename
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS =  set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -13,7 +14,36 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['COMPRESS_MIMETYPES'] =  ['text/html', 'text/css', 'text/xml', 'application/json', 'application/javascript', 'image/jpeg', 'image/png']
 
-@app.route('/upload/url', methods=['GET', 'POST'])
+
+# Helper methods
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+def hash_name(filename):
+    md5 = hashlib.md5()
+    md5.update(filename)
+    str(md5.hexdigest()) + '.jpg'
+
+
+# Routes
+@app.route('/upload/file', methods=['POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            success_response = {
+                'success': 'true',
+                'new_url': url_for('get_image', filename=filename, _external=True)
+            }
+
+            return json.dumps(success_response)
+        else:
+            return json.dumps({'success': False, 'error': 'Not a valid image file'})
+
+@app.route('/upload/url', methods=['POST'])
 def upload_file_by_url():
 
     # if upload dir is too full, purge 10 oldest
@@ -35,11 +65,7 @@ def upload_file_by_url():
         url = request.form['url'].strip()
         r = requests.get(url)
 
-        # url hash 
-        md5 = hashlib.md5()
-        md5.update(url)
-
-        filename = str(md5.hexdigest()) + '.jpg'
+        filename = hash_name(url)
         filepath = UPLOAD_FOLDER + "/" + filename
 
         # if file doesnt exist already
